@@ -1,27 +1,117 @@
-// models/persona.go
-
 package models
 
 import (
-	"fyne.io/fyne/theme"
+	"fmt"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
-	"fyne.io/fyne/v2/container"
 )
 
-func CreateCharacter() fyne.CanvasObject {
-	character := canvas.NewImageFromFile("assets/personaje.png")
-	character.FillMode = canvas.ImageFillContain
-	character.Resize(fyne.NewSize(50, 50))
-	return character
+type Personaje struct {
+	posX, posY float32
+	status     bool
+	Perso      *canvas.Image
+	width      float32
 }
 
-func CreateCharacterContainer() *fyne.Container {
-	character := CreateCharacter()
-	blankSpace := canvas.NewRectangle(theme.BackgroundColor())
-	blankSpace.SetMinSize(fyne.NewSize(50, 50))
+func NewPersonaje(posX, posY float32, img *canvas.Image) *Personaje {
+	return &Personaje{
+		posX:   posX,
+		posY:   posY,
+		status: true,
+		Perso:  img,
+	}
+}
 
-	characterContainer := container.NewVBox(blankSpace, character)
+func (p *Personaje) GetPosX() float32 {
+	return p.posX
+}
 
-	return characterContainer
+func (p *Personaje) GetPosY() float32 {
+	return p.posY
+}
+
+func (p *Personaje) GetPosition() fyne.Position {
+	return fyne.NewPos(p.posX, p.posY)
+}
+
+func (p *Personaje) Run(window fyne.Window) {
+	p.status = true
+
+	//for p.status {
+	window.Canvas().SetOnTypedKey(func(key *fyne.KeyEvent) {
+		switch key.Name {
+		case fyne.KeyRight:
+			fmt.Println("right")
+			p.right()
+		case fyne.KeyUp:
+			fmt.Println("up")
+			p.up()
+		case fyne.KeyDown:
+			fmt.Println("down")
+			p.down()
+		case fyne.KeyLeft:
+			fmt.Println("left")
+			p.left()
+		default:
+			fmt.Println("moved not valid")
+		}
+	})
+
+	//}
+}
+
+func (p *Personaje) SetStatus(status bool) {
+	p.status = status
+}
+
+func (p *Personaje) right() {
+	fmt.Println(p.posX, p.posY, "antes if")
+	if p.status && p.posX <= 1170 {
+		fmt.Println(p.posX, p.posY, "if")
+		p.posX += 10
+
+	} else {
+		p.posX = 1170
+	}
+	p.Perso.Move(fyne.NewPos(p.posX, p.posY))
+	p.Perso.Refresh()
+}
+
+func (p *Personaje) left() {
+	fmt.Println(p.posX, p.posY, "antes if")
+	if p.status && p.posX >= 0 {
+		fmt.Println(p.posX, p.posY, "if")
+		p.posX -= 10
+
+	} else {
+		p.posX = 0
+	}
+	p.Perso.Move(fyne.NewPos(p.posX, p.posY))
+	p.Perso.Refresh()
+}
+
+func (p *Personaje) down() {
+	fmt.Println(p.posX, p.posY, "antes if")
+	if p.status && p.posY <= 660 {
+		fmt.Println(p.posX, p.posY, "if")
+		p.posY += 10
+
+	} else {
+		p.posY = 660
+	}
+	p.Perso.Move(fyne.NewPos(p.posX, p.posY))
+	p.Perso.Refresh()
+}
+
+func (p *Personaje) up() {
+	fmt.Println(p.posX, p.posY, "antes if")
+	if p.status && p.posY >= 0 {
+		fmt.Println(p.posX, p.posY, "if")
+		p.posY -= 10
+
+	} else {
+		p.posY = 0
+	}
+	p.Perso.Move(fyne.NewPos(p.posX, p.posY))
+	p.Perso.Refresh()
 }
